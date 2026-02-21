@@ -65,7 +65,7 @@ crewai-streamlit-demo/
 ## 📋 Requirements
 
 - Python >=3.10 and <3.13
-- OpenAI API key or GROQ API key
+- OpenRouter API key, OpenAI API key, or GROQ API key
 - Exa API key
 - Streamlit
 
@@ -97,14 +97,52 @@ streamlit run streamlit_app.py
 
 The application requires the following API keys:
 
-1. **OpenAI API Key** or **GROQ API Key**
+1. **OpenRouter API Key** (Recommended)
+   - Get it from [OpenRouter](https://openrouter.ai/)
+   - Provides access to multiple LLM providers (OpenAI, Anthropic, Google, Meta, etc.)
+
+2. **OpenAI API Key** or **GROQ API Key** (Alternative)
    - For OpenAI: Get it from [OpenAI Platform](https://platform.openai.com/)
    - For GROQ: Get it from [GROQ Console](https://console.groq.com/)
 
-2. **Exa API Key**
+3. **Exa API Key**
    - Get it from [Exa](https://exa.ai)
 
 Enter these keys in the sidebar of the application when prompted.
+
+## 🐳 Docker Deployment
+
+### Build and Run Locally
+
+```bash
+# Build the Docker image
+docker build -t crewai-research-assistant .
+
+# Run the container
+docker run -p 8501:8501 \
+  -e OPENROUTER_API_KEY=your-api-key \
+  -e EXA_API_KEY=your-exa-key \
+  crewai-research-assistant
+```
+
+### Deploy to Coolify
+
+1. Push your code to GitHub
+2. In Coolify, create a new resource and select your Git repository
+3. Coolify will automatically detect the Dockerfile
+4. Configure the environment variables in Coolify's dashboard:
+   - `OPENROUTER_API_KEY` - Your OpenRouter API key
+   - `EXA_API_KEY` - Your Exa API key
+5. Deploy!
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENROUTER_API_KEY` | OpenRouter API key | If using OpenRouter |
+| `OPENAI_API_KEY` | OpenAI API key | If using OpenAI |
+| `GROQ_API_KEY` | GROQ API key | If using GROQ |
+| `EXA_API_KEY` | Exa API key for web search | Yes (except Ollama) |
 
 ## 🎯 Usage
 

@@ -23,7 +23,7 @@ class EXAAnswerTool(BaseTool):
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
-            "x-api-key": st.secrets["EXA_API_KEY"]
+            "x-api-key": os.environ.get("EXA_API_KEY")
         }
         
         try:
@@ -60,7 +60,7 @@ def create_researcher(selection):
     
     Args:
         selection (dict): Contains provider and model information
-            - provider (str): The LLM provider ("OpenAI", "GROQ", or "Ollama")
+            - provider (str): The LLM provider ("OpenRouter", "OpenAI", "GROQ", or "Ollama")
             - model (str): The model identifier or name
     
     Returns:
@@ -74,9 +74,16 @@ def create_researcher(selection):
     provider = selection["provider"]
     model = selection["model"]
     
-    if provider == "GROQ":
+    if provider == "OpenRouter":
+        # OpenRouter uses OpenAI-compatible API
         llm = LLM(
-            api_key=st.secrets["GROQ_API_KEY"],
+            api_key=os.environ.get("OPENROUTER_API_KEY"),
+            model=f"openrouter/{model}",
+            base_url="https://openrouter.ai/api/v1"
+        )
+    elif provider == "GROQ":
+        llm = LLM(
+            api_key=os.environ.get("GROQ_API_KEY"),
             model=f"groq/{model}"
         )
     elif provider == "Ollama":
@@ -85,6 +92,7 @@ def create_researcher(selection):
             model=f"ollama/{model}",
         )
     else:
+        # OpenAI provider
         # Map friendly names to concrete model names for OpenAI
         if model == "GPT-3.5":
             model = "gpt-3.5-turbo"
@@ -100,7 +108,7 @@ def create_researcher(selection):
         if not model:
             model = "o1"
         llm = LLM(
-            api_key=st.secrets["OPENAI_API_KEY"],
+            api_key=os.environ.get("OPENAI_API_KEY"),
             model=f"openai/{model}"
         )
     

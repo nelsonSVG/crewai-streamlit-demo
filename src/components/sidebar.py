@@ -40,12 +40,32 @@ def render_sidebar():
         with st.expander("🤖 Model Selection", expanded=True):
             provider = st.radio(
                 "Select LLM Provider",
-                ["OpenAI", "GROQ", "Ollama"],
+                ["OpenRouter", "OpenAI", "GROQ", "Ollama"],
                 help="Choose which Large Language Model provider to use",
                 horizontal=True
             )
             
-            if provider == "OpenAI":
+            if provider == "OpenRouter":
+                model = st.selectbox(
+                    "Select OpenRouter Model",
+                    [
+                        "openai/gpt-4o-mini",
+                        "openai/gpt-4o",
+                        "openai/o1-preview",
+                        "anthropic/claude-3.5-sonnet",
+                        "anthropic/claude-3-opus",
+                        "google/gemini-pro-1.5",
+                        "meta-llama/llama-3.1-70b-instruct",
+                        "deepseek/deepseek-chat",
+                        "qwen/qwen-2.5-72b-instruct",
+                        "Custom"
+                    ],
+                    index=0,
+                    help="Choose from OpenRouter's available models. OpenRouter provides access to many LLM providers."
+                )
+                if model == "Custom":
+                    model = st.text_input("Enter your custom OpenRouter model:", value="", help="Specify your custom model string (e.g., openai/gpt-4o)")
+            elif provider == "OpenAI":
                 model_option = st.selectbox(
                     "Select OpenAI Model",
                     ["gpt-4o-mini", "gpt-4o", "o1", "o1-mini", "o1-preview", "o3-mini", "Custom"],
@@ -87,7 +107,17 @@ def render_sidebar():
         
         with st.expander("🔑 API Keys", expanded=True):
             st.info("API keys are stored temporarily in memory and cleared when you close the browser.")
-            if provider == "OpenAI":
+            if provider == "OpenRouter":
+                openrouter_api_key = st.text_input(
+                    "OpenRouter API Key",
+                    type="password",
+                    placeholder="Enter your OpenRouter API key",
+                    help="Enter your OpenRouter API key",
+                    value=os.environ.get("OPENROUTER_API_KEY", "")
+                )
+                if openrouter_api_key:
+                    os.environ["OPENROUTER_API_KEY"] = openrouter_api_key
+            elif provider == "OpenAI":
                 openai_api_key = st.text_input(
                     "OpenAI API Key",
                     type="password",
@@ -112,7 +142,8 @@ def render_sidebar():
                     "EXA API Key",
                     type="password",
                     placeholder="Enter your EXA API key",
-                    help="Enter your EXA API key for web search capabilities"
+                    help="Enter your EXA API key for web search capabilities",
+                    value=os.environ.get("EXA_API_KEY", "")
                 )
                 if exa_api_key:
                     os.environ["EXA_API_KEY"] = exa_api_key

@@ -39,7 +39,11 @@ with col2:
 selection = render_sidebar()
 
 # Check if API keys are set based on provider
-if selection["provider"] == "OpenAI":
+if selection["provider"] == "OpenRouter":
+    if not os.environ.get("OPENROUTER_API_KEY"):
+        st.warning("⚠️ Please enter your OpenRouter API key in the sidebar to get started")
+        st.stop()
+elif selection["provider"] == "OpenAI":
     if not os.environ.get("OPENAI_API_KEY"):
         st.warning("⚠️ Please enter your OpenAI API key in the sidebar to get started")
         st.stop()
